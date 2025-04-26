@@ -1,0 +1,8 @@
+node_modules
+.DS_Store
+.key
+.npmrc
+.env
+.env.ppd
+deploy/
+tsconfig.tsbuildinfo

@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id          String @id @unique @default(uuid()) @db.Uuid()
+  name        String
+  description String
+  price       Float
+  slug        String @unique
+  imageUrl    String @map("image_url")
+
+  transactions Transaction[]
+  fakeComments FakeComment[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("products")
+}
+
+model Transaction {
+  id            String           @id @unique @default(uuid()) @db.Uuid()
+  senderName    String           @map("sender_name")
+  recipientName String?          @map("recipient_name")
+  message       String
+  type          ETransactionType
+
+  productId String  @map("product_id") @db.Uuid()
+  product   Product @relation(fields: [productId], references: [id])
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+}
+
+model FakeComment {
+  id      String @id @unique @default(uuid()) @db.Uuid()
+  name    String
+  comment String
+  stars   Int
+
+  productId String  @map("product_id") @db.Uuid()
+  product   Product @relation(fields: [productId], references: [id])
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+}
+
+enum ETransactionType {
+  GIFT
+  SELF
+}
